@@ -37,6 +37,7 @@ class Advertisements {
       final payload = jsonDecode(requestData);
 
       final animal = Animal.fromJson(payload['animal']);
+      final location = payload['location'];
       final state = payload['state']; //pierdut gasit
       final uid = payload['id_user'];
 
@@ -46,18 +47,22 @@ class Advertisements {
             headers: {'Content-Type': 'application/json'});
       } else if (uid == null) {
         return Response.notFound(
-            jsonEncode({'success':false, 'error': 'Missing id_user'}),
-                headers: {'Content-Type': 'application/json'});
+            jsonEncode({'success': false, 'error': 'Missing id_user'}),
+            headers: {'Content-Type': 'application/json'});
       } else if (state == null) {
         return Response.notFound(
-            jsonEncode({'success':false, 'error': 'Missing state'}),
-                headers: {'Content-Type': 'application/json'});
+            jsonEncode({'success': false, 'error': 'Missing state'}),
+            headers: {'Content-Type': 'application/json'});
+      } else if (location == null) {
+        return Response.notFound(
+            jsonEncode({'success': false, 'error': 'Missing location'}),
+            headers: {'Content-Type': 'application/json'});
       }
 
       try {
         final app = await initApp();
         final db =
-        FirebaseDatabase(app: app, databaseURL: Configurations.databaseUrl);
+            FirebaseDatabase(app: app, databaseURL: Configurations.databaseUrl);
         final ref = db.reference().child('animals');
         final newPostKey = ref.push().key;
         animal.setId(newPostKey!);
@@ -66,7 +71,6 @@ class Advertisements {
           "rasa": animal.rasa,
           "description": animal.description,
           "photoUrl": animal.photoUrl,
-          "location": animal.location,
           "found": animal.found
         });
 
@@ -76,7 +80,8 @@ class Advertisements {
           "id_animal": newPostKey,
           "id_user": uid,
           "created_at": DateTime.now().toString(),
-          "state": state
+          "state": state,
+          "location": location,
         });
 
         return Response.ok(jsonEncode({'success': true}),
@@ -92,14 +97,14 @@ class Advertisements {
       var app = await initApp();
 
       final db =
-      FirebaseDatabase(app: app, databaseURL: Configurations.databaseUrl);
+          FirebaseDatabase(app: app, databaseURL: Configurations.databaseUrl);
       final ref = db.reference().child("advertisements");
-      List<Advertisement>responseData = [];
+      List<Advertisement> responseData = [];
       await ref.get().then((value) {
-        if(value != null){
+        if (value != null) {
           Map<dynamic, dynamic> array = value;
           array.forEach((key, value) {
-            if(value['state'] == state) {
+            if (value['state'] == state) {
               Advertisement advertisement = Advertisement.fromJson(value, key);
               responseData.add(advertisement);
             }
@@ -107,8 +112,10 @@ class Advertisements {
         }
       });
 
-      return Response.ok(json.encode(responseData),
-          headers: {'content-type': 'application/json'});
+      return Response.ok(json.encode(responseData), headers: {
+        'content-type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+      });
     });
     return router;
   }

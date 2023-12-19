@@ -4,24 +4,27 @@ class Advertisement {
   late String idUser;
   late String state;
   late String createdAt;
+  late String location;
 
-  Advertisement(this.id, this.idAnimal, this.idUser, this.state, this.createdAt);
+  Advertisement(this.id, this.idAnimal, this.idUser, this.state, this.createdAt,
+      this.location);
 
   factory Advertisement.fromJson(dynamic json, String id) {
     return Advertisement(
-        id,
-        json['id_animal'] as String,
-        json["id_user"] as String,
-        json["state"] as String,
-        json["created_at"] as String
+      id,
+      json['id_animal'] as String,
+      json["id_user"] as String,
+      json["state"] as String,
+      json["created_at"] as String,
+      json["location"] as String,
     );
   }
 
   Map toJson() => {
-    'id': id,
-    'id_animal': idAnimal,
-    'id_user': idUser,
-    'state': state,
-    'created_at': createdAt
-  };
+        'id': id,
+        'id_animal': idAnimal,
+        'id_user': idUser,
+        'state': state,
+        'created_at': createdAt
+      };
 }

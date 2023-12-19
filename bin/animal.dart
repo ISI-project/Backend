@@ -4,11 +4,9 @@ class Animal {
   late String rasa;
   late String photoUrl;
   late String description;
-  late String location;
   late bool found;
 
-  Animal(this.name, this.rasa, this.photoUrl, this.description, this.location,
-      this.found);
+  Animal(this.name, this.rasa, this.photoUrl, this.description, this.found);
 
   factory Animal.fromJson(dynamic json) {
     return Animal(
@@ -16,7 +14,6 @@ class Animal {
         json['rasa'] as String,
         json["description"] as String,
         json["photoUrl"] as String,
-        json["location"] as String,
         json["found"] as bool);
   }
 
