@@ -4,10 +4,11 @@ class Advertisement {
   late String idUser;
   late String state;
   late String createdAt;
-  late String location;
+  late double latitude;
+  late double longitude;
 
   Advertisement(this.id, this.idAnimal, this.idUser, this.state, this.createdAt,
-      this.location);
+      this.latitude, this.longitude);
 
   factory Advertisement.fromJson(dynamic json, String id) {
     return Advertisement(
@@ -16,7 +17,8 @@ class Advertisement {
       json["id_user"] as String,
       json["state"] as String,
       json["created_at"] as String,
-      json["location"] as String,
+      json["latitude"] as double,
+      json["longitude"] as double,
     );
   }
 
@@ -25,6 +27,8 @@ class Advertisement {
         'id_animal': idAnimal,
         'id_user': idUser,
         'state': state,
-        'created_at': createdAt
+        'created_at': createdAt,
+        'latitude': latitude,
+        'longitude': longitude,
       };
 }

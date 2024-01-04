@@ -37,9 +37,10 @@ class Advertisements {
       final payload = jsonDecode(requestData);
 
       final animal = Animal.fromJson(payload['animal']);
-      final location = payload['location'];
       final state = payload['state']; //pierdut gasit
       final uid = payload['id_user'];
+      final latitude = payload['latitude'];
+      final longitude = payload['longitude'];
 
       if (animal == null) {
         return Response.notFound(
@@ -53,9 +54,13 @@ class Advertisements {
         return Response.notFound(
             jsonEncode({'success': false, 'error': 'Missing state'}),
             headers: {'Content-Type': 'application/json'});
-      } else if (location == null) {
+      } else if (latitude == null) {
         return Response.notFound(
-            jsonEncode({'success': false, 'error': 'Missing location'}),
+            jsonEncode({'success': false, 'error': 'Missing latitude'}),
+            headers: {'Content-Type': 'application/json'});
+      } else if (longitude == null) {
+        return Response.notFound(
+            jsonEncode({'success': false, 'error': 'Missing longitude'}),
             headers: {'Content-Type': 'application/json'});
       }
 
@@ -81,11 +86,15 @@ class Advertisements {
           "id_user": uid,
           "created_at": DateTime.now().toString(),
           "state": state,
-          "location": location,
+          "latitude": latitude,
+          "longitude": longitude,
         });
 
-        return Response.ok(jsonEncode({'success': true}),
-            headers: {'Content-Type': 'application/json'});
+        return Response.ok(jsonEncode({'success': true}), headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Credentials': 'true'
+        });
       } catch (e) {
         return Response.internalServerError(
             body: jsonEncode({'success': false, 'error': e.toString()}),
