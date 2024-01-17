@@ -109,17 +109,34 @@ class Advertisements {
           FirebaseDatabase(app: app, databaseURL: Configurations.databaseUrl);
       final ref = db.reference().child("advertisements");
       List<Advertisement> responseData = [];
-      await ref.get().then((value) {
-        if (value != null) {
-          Map<dynamic, dynamic> array = value;
-          array.forEach((key, value) {
-            if (value['state'] == state) {
-              Advertisement advertisement = Advertisement.fromJson(value, key);
+
+      final value = await ref.get();
+      if (value != null) {
+        Map<dynamic, dynamic> array = value;
+        List<Future> fetchAnimalFutures = [];
+
+        array.forEach((key, value) {
+          if (value['state'] == state) {
+            Future fetchAnimal = db
+                .reference()
+                .child("animals")
+                .child(value['id_animal'])
+                .once()
+                .then((value2) {
+              Map<String, dynamic> animalData = value2.value;
+              Animal animal = Animal.fromJson(animalData);
+              animal.setId(value2.key!);
+              Advertisement advertisement =
+                  Advertisement.fromJson(value, key, animal);
               responseData.add(advertisement);
-            }
-          });
-        }
-      });
+            });
+
+            fetchAnimalFutures.add(fetchAnimal);
+          }
+        });
+
+        await Future.wait(fetchAnimalFutures);
+      }
 
       return Response.ok(json.encode(responseData), headers: {
         'content-type': 'application/json',

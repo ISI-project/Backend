@@ -1,5 +1,5 @@
 class Animal {
-  late String _id;
+  late String id;
   late String name;
   late String rasa;
   late String photoUrl;
@@ -17,7 +17,16 @@ class Animal {
         json["found"] as bool);
   }
 
-  void setId(String id) {
-    _id = id;
+  void setId(String key) {
+    id = key;
   }
+
+  Map toJson() => {
+        'id': id,
+        'name': name,
+        'rasa': rasa,
+        'description': description,
+        'photoUrl': photoUrl,
+        'found': found,
+      };
 }
